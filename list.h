@@ -3,14 +3,14 @@
 
 typedef struct linked_list
 {
-    struct node *head;
-    int size;
+  struct node *head;
+  int size;
 } linked_list;
 
 typedef struct node
 {
-    void *data;
-    struct node *next;
+  void *data;
+  struct node *next;
 } node;
 
 void list_add(linked_list *list, void *data, size_t size);

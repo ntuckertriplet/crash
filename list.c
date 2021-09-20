@@ -5,6 +5,16 @@
 #include "list.h"
 
 /**
+ * This is a helper Linked List class that I made as part
+ * of a data structures library that was meant to be portable,
+ * generic, and easy to use. I know, generics in C sounds spooky,
+ * and at times, it is, but it works as long as you put
+ * a little more legwork in.
+ * 
+ * See {@link https://github.com/ntuckertriplet/libdatastructures/blob/master/linkedlist.c}
+ */ 
+
+/**
  * Helper method to add item to the list
  * 
  * @param head the head node of the linked list
@@ -13,25 +23,25 @@
  */
 void _list_add(node *head, void *data, size_t size)
 {
-    if (head->data == NULL)
-    {
-        head->data = malloc(size);
-        memcpy(head->data, data, size);
-        return;
-    }
+  if (head->data == NULL)
+  {
+    head->data = malloc(size);
+    memcpy(head->data, data, size);
+    return;
+  }
 
-    node *to_add = malloc(sizeof(node));
-    to_add->data = malloc(size);
-    memcpy(to_add->data, data, size);
-    to_add->next = NULL;
+  node *to_add = malloc(sizeof(node));
+  to_add->data = malloc(size);
+  memcpy(to_add->data, data, size);
+  to_add->next = NULL;
 
-    node *cur_node = head;
-    while (cur_node->next != NULL)
-    {
-        cur_node = cur_node->next;
-    }
+  node *cur_node = head;
+  while (cur_node->next != NULL)
+  {
+    cur_node = cur_node->next;
+  }
 
-    cur_node->next = to_add;
+  cur_node->next = to_add;
 }
 
 /**
@@ -43,13 +53,13 @@ void _list_add(node *head, void *data, size_t size)
  */
 void list_add(linked_list *list, void *data, size_t size)
 {
-    if (list->head == NULL)
-    {
-        list->head = malloc(sizeof(node));
-    }
+  if (list->head == NULL)
+  {
+    list->head = malloc(sizeof(node));
+  }
 
-    _list_add(list->head, data, size);
-    list->size++;
+  _list_add(list->head, data, size);
+  list->size++;
 }
 
 /**
@@ -62,26 +72,26 @@ void list_add(linked_list *list, void *data, size_t size)
  */
 void *_get(node *head, int index)
 {
-    if (head == NULL)
-    {
-        return NULL;
-    }
-
-    int i = 0;
-    node *cur_node = head;
-
-    while (cur_node != NULL)
-    {
-        if (i == index)
-        {
-            return cur_node->data;
-        }
-
-        cur_node = cur_node->next;
-        i++;
-    }
-
+  if (head == NULL)
+  {
     return NULL;
+  }
+
+  int i = 0;
+  node *cur_node = head;
+
+  while (cur_node != NULL)
+  {
+    if (i == index)
+    {
+      return cur_node->data;
+    }
+
+    cur_node = cur_node->next;
+    i++;
+  }
+
+  return NULL;
 }
 
 /**
@@ -94,7 +104,7 @@ void *_get(node *head, int index)
  */
 void *get(linked_list *list, int index)
 {
-    return _get(list->head, index);
+  return _get(list->head, index);
 }
 
 /**
@@ -108,23 +118,23 @@ void *get(linked_list *list, int index)
  */
 int _contains(node *head, void *data, int (*compar)(const void *, const void *))
 {
-    if (head == NULL)
-    {
-        return -1;
-    }
-
-    node *cur_node = head;
-    while (cur_node != NULL)
-    {
-        if ((*compar)(cur_node->data, data) == 0)
-        {
-            return 1;
-        }
-
-        cur_node = cur_node->next;
-    }
-
+  if (head == NULL)
+  {
     return -1;
+  }
+
+  node *cur_node = head;
+  while (cur_node != NULL)
+  {
+    if ((*compar)(cur_node->data, data) == 0)
+    {
+      return 1;
+    }
+
+    cur_node = cur_node->next;
+  }
+
+  return -1;
 }
 
 /**
@@ -138,7 +148,7 @@ int _contains(node *head, void *data, int (*compar)(const void *, const void *))
  */
 int contains(linked_list *list, void *data, int (*compar)(const void *, const void *))
 {
-    return _contains(list->head, data, (*compar));
+  return _contains(list->head, data, (*compar));
 }
 
 /**
@@ -152,25 +162,25 @@ int contains(linked_list *list, void *data, int (*compar)(const void *, const vo
  */
 int _index_of(node *head, void *data, int (*compar)(const void *, const void *))
 {
-    if (head == NULL || data == NULL)
-    {
-        return -1;
-    }
-
-    int i = 0;
-    node *cur_node = head;
-    while (cur_node != NULL)
-    {
-        if ((*compar)(cur_node->data, data) == 0)
-        {
-            return i;
-        }
-
-        i++;
-        cur_node = cur_node->next;
-    }
-
+  if (head == NULL || data == NULL)
+  {
     return -1;
+  }
+
+  int i = 0;
+  node *cur_node = head;
+  while (cur_node != NULL)
+  {
+    if ((*compar)(cur_node->data, data) == 0)
+    {
+      return i;
+    }
+
+    i++;
+    cur_node = cur_node->next;
+  }
+
+  return -1;
 }
 
 /**
