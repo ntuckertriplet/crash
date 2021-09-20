@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "debug.h"
+#include "signal.h"
 
 int main(int argc, char **argv)
 {
@@ -27,6 +28,8 @@ int main(int argc, char **argv)
   int run = 1;
   while(run)
   {
+    signal(SIGINT, signal_handler); // we want to catch ^C
+
     char input[256]; // initialize a buffer for user input
 
     usleep(50);
