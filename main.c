@@ -30,72 +30,69 @@ int main(int argc, char **argv)
   {
     signal(SIGINT, signal_handler); // we want to catch ^C
 
-    char input[256]; // initialize a buffer for user input
+    // starting malloc size for command line args, to be realloc'ed later if needed
+    int malloc_size = 2;
+    char** commands = malloc(sizeof(char*) * malloc_size);
 
+    // don't interrupt the input/output buffer
     usleep(50);
     fprintf(stdout, "%s", prompt);
 
-    int i;
-    for (i = 0; i < 256; i++)
+    char* input = NULL;
+    size_t len = 0;
+    getline(&input, &len, stdin);
+    
+    // snag the first item in the line (possible it's the first)
+    char* input_token = strtok(input, " ");
+    int num_inputs = 0; // num inputs will always be +1 because 0 index
+    while(input_token != NULL)
     {
-      int c = fgetc(stdin);
-      if (c == EOF || c == '\n')
+      commands[num_inputs] = strdup(input_token);
+      commands[num_inputs][strcspn(commands[num_inputs], "\n")] = 0; // replace newline with '\0'
+      num_inputs += 1;
+      if (num_inputs == malloc_size) // if we reached the max supported size
       {
-        input[i] = '\0';
-        break;
+        void* _ = realloc(commands, malloc_size * 2);
+        if (_ == NULL)
+        {
+          fprintf(stderr, "memory error in command parsing, exiting\n");
+          exit(-1);
+        }
+        malloc_size *= 2;
       }
 
-      input[i] = c;
+      input_token = strtok(NULL, " ");
     }
 
     /* Builtin commands to support */
-    if (strncmp(input, "exit", 4) == 0) run = 0;
-    else if (strncmp(input, "quit", 4) == 0) fprintf(stderr, "did you mean 'exit'?\nx ");
-    else if (strncmp(input, "pid", 3) == 0) fprintf(stdout, "%d\n", getpid());
-    else if (strncmp(input, "ppid", 4) == 0) fprintf(stdout, "%d\n", getppid());
-    else if (strncmp(input, "pwd", 3) == 0)
+    if (strncmp(commands[0], "exit", 4) == 0) run = 0;
+    else if (strncmp(commands[0], "quit", 4) == 0) fprintf(stderr, "did you mean 'exit'?\nx ");
+    else if (strncmp(commands[0], "pid", 3) == 0) fprintf(stdout, "%d\n", getpid());
+    else if (strncmp(commands[0], "ppid", 4) == 0) fprintf(stdout, "%d\n", getppid());
+    else if (strncmp(commands[0], "pwd", 3) == 0)
     {
       char cwd[256];
-      if (getcwd(cwd, sizeof(cwd)) != NULL)
-      {
-        fprintf(stdout, "%s\n", cwd);
-      }
-      else
-      {
-        fprintf(stderr, "error fetching current working directory\nx ");
-      }
+      if (getcwd(cwd, sizeof(cwd)) != NULL) fprintf(stdout, "%s\n", cwd);
+      else fprintf(stderr, "error fetching current working directory\nx ");
     }
-    else if (strncmp(input, "cd", 2) == 0) // if "cd" appears _at all_
+    else if (strncmp(commands[0], "cd", 2) == 0) // if "cd" appears _at all_ at the beginning
     {
-      if (strcmp(input, "cd") == 0) // if no arg passed in, just go $HOME
+      if (num_inputs == 1) // if no arg passed in, just cd, just go $HOME
       {
         char* home = getenv("HOME");
-        if (home == NULL)
-        {
-          fprintf(stderr, "error fetching $HOME. has it been set?\nx ");
-        }
-        else
-        {
-          chdir(home);
-        }
+        if (home == NULL) fprintf(stderr, "error fetching $HOME. has it been set?\nx ");
+        else chdir(home);
       }
       else // we need to chdir() to the arg passed in
       {
-        char* token = strtok(input, " "); // this will grab "cd"
-        if (token == NULL)
-        {
-          fprintf(stderr, "error in parsing, maybe try again?\nx ");
-        }
-
-        token = strtok(NULL, " "); // this should grab the relative or absolute directory
-        int changed = chdir(token);
-        if (changed == -1) // no path exists for this, sorry!
-        {
-          fprintf(stderr, "no such file or directory: %s\nx ", token);
-        }
+        if (chdir(commands[1]) == -1) fprintf(stderr, "no such file or directory:%s\nx ", commands[1]);
       }
     }
     /* End builtins */
+
+    /* cleanup */
+    int i;
+    for (i = 0; i < num_inputs; i++) free(commands[i]);
   }
 
   return 0;
