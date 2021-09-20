@@ -18,11 +18,12 @@
 - [ ] wait for child to exit by default
 - [ ] when a child process exits, print out the pid and exit status
 - [ ] backgrounding tasks
-- [ ] `exit`
-- [ ] `pid`
-- [ ] `ppid`
-- [ ] `cd <dir>`
-- [ ] `pwd
+- [x] `exit`
+- [x] `pid`
+- [x] `ppid`
+- [x] `cd`
+- [x] `cd <dir>`
+- [x] `pwd
 
 ## extra credit
 
