@@ -10,13 +10,13 @@
 - [x] assign prompt if passed in
 - [x] leave default if not
 - [x] print error if flag is used, but with no prompt
-- [ ] accept user input
-- [ ] parse commands and flags
+- [x] accept user input
+- [x] parse commands and flags
 - [ ] program commands (using `execvp()`)
 - [ ] notify user if command is not found
-- [ ] print pid of command when spawned, including name of command
-- [ ] wait for child to exit by default
-- [ ] when a child process exits, print out the pid and exit status
+- [x] print pid of command when spawned, including name of command
+- [x] wait for child to exit by default
+- [x] when a child process exits, print out the pid and exit status
 - [ ] backgrounding tasks
 - [x] `exit`
 - [x] `pid`

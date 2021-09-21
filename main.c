@@ -32,10 +32,9 @@ int main(int argc, char **argv)
 
   linked_list *jobs = malloc(sizeof(linked_list));
 
-  int run = 1;
-  while (run)
+  while (1)
   {
-    signal(SIGINT, signal_handler); // we want to catch ^C
+    // signal(SIGINT, signal_handler); // we want to catch ^C
 
     int bg_status = -1;
     int bg_pid = -1;
@@ -99,15 +98,26 @@ int main(int argc, char **argv)
       input_token = strtok(NULL, " ");
     }
 
+#ifdef DEBUG
+    fprintf(stdout, "WE GOT %d INPUTS\n", num_inputs);
+    for (int j = 0; j < num_inputs; j++)
+      fprintf(stdout, "COMMAND AT INDEX %d IS %s\n", j, commands[j]);
+#endif
+
+    // check if we need to background it
     int do_background = (strcmp(commands[num_inputs - 1], "&") == 0);
-
-    printf("DO BACKGROUND %d\n", do_background);
-
-    printf("NUM INPUTS: %d\n", num_inputs);
+#ifdef DEBUG
+    fprintf(stdout, "DO_BACKGROUND STATUS: %d\n", do_background);
+#endif
+    if (do_background)
+      num_inputs -= 1; // this will be important when we go to fork
+#ifdef DEBUG
+    fprintf(stdout, "NEW NUM INPUTS IS %d\n", num_inputs);
+#endif
 
     /* Builtin commands to support */
     if (strncmp(commands[0], "exit", 4) == 0)
-      run = 0;
+      return 0;
     else if (strncmp(commands[0], "quit", 4) == 0)
       fprintf(stderr, "did you mean 'exit'?\nx ");
     else if (strncmp(commands[0], "pid", 3) == 0)
@@ -138,7 +148,69 @@ int main(int argc, char **argv)
           fprintf(stderr, "no such file or directory:%s\nx ", commands[1]);
       }
     }
+    else if (strncmp(commands[0], "jobs", 4) == 0)
+    {
+      if (jobs->size == 0)
+        fprintf(stderr, "no jobs currently running\n");
+      else
+      {
+        node *cur_node = jobs->head;
+        while (cur_node != NULL)
+        {
+          process *p = (process *)cur_node->data;
+          fprintf(stdout, "pid: %d, name: %s\n", p->pid, p->name);
+          cur_node = cur_node->next;
+        }
+      }
+    }
+    else if (strcmp(commands[0], "") == 0) // ignore empty input
+      continue;
     /* End builtins */
+    else
+    { /* start sending things to the shell */
+      // duplicate for NULL terminated command list
+      char **args = malloc(sizeof(char *) * num_inputs + 1);
+      int i;
+      for (i = 0; i < num_inputs; i++)
+        args[i] = strdup(commands[i]);
+      args[num_inputs] = NULL;
+
+#ifdef DEBUG
+      for (i = 0; i < num_inputs + 1; i++)
+        fprintf(stdout, "ARG AT %d IS %s\n", i, args[i]);
+#endif
+
+      int pid, status;
+      pid = fork();
+      if (pid < 0)
+        fprintf(stderr, "whoa there, something went awry with that fork\n");
+      else if (pid == 0) // child process
+      {
+        fprintf(stdout, "[%d] %s\n", getpid(), commands[0]);
+        int error = execvp(commands[0], commands);
+#ifdef DEBUG
+        fprintf(stdout, "EXECVP OUTPUT: %d\n", error);
+#endif
+        if (error < 0)
+          fprintf(stderr, "command not found: %s\n", commands[0]);
+        exit(-1);
+      }
+      else // parent now
+      {
+        if (!do_background)
+        {
+          waitpid(pid, &status, 0);
+          get_status(pid, status, commands[0]);
+        }
+        else
+        {
+          process *to_add = malloc(sizeof(process));
+          to_add->pid = pid;
+          to_add->name = strdup(commands[0]);
+          list_add(jobs, (void *)to_add, sizeof(process));
+        }
+      }
+    }
 
     /* cleanup */
     int i;

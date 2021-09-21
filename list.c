@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "list.h"
+#include "debug.h"
 
 /**
  * This is a helper Linked List class that I made as part
@@ -53,8 +54,14 @@ void _list_add(node *head, void *data, size_t size)
  */
 void list_add(linked_list *list, void *data, size_t size)
 {
+#ifdef DEBUG
+  fprintf(stdout, "ADDING TO THE LIST\n");
+#endif
   if (list->head == NULL)
   {
+#ifdef DEBUG
+    fprintf(stdout, "NULL HEAD\n");
+#endif
     list->head = malloc(sizeof(node));
   }
 
@@ -216,13 +223,10 @@ int _list_delete(node *head, void *data, int (*compar)(const void *, const void 
   node *prev = head;
   while (cur_node != NULL)
   {
-    printf("WALKING THE LIST\n");
     if ((*compar)(cur_node->data, data) == 0)
     {
-      printf("FOUND AN ITEM\n");
       if ((*compar)(cur_node->data, head->data) == 0) // head of list
       {
-        printf("WE ARE AT THE HEAD\n");
         head = cur_node->next;
         free(cur_node->data);
         cur_node->next = NULL;
@@ -230,7 +234,6 @@ int _list_delete(node *head, void *data, int (*compar)(const void *, const void 
       }
       else if (cur_node->next == NULL) // back of list
       {
-        printf("WE ARE AT THE END\n");
         prev->next = NULL;
         cur_node->next = NULL;
         free(cur_node->data);
@@ -238,7 +241,6 @@ int _list_delete(node *head, void *data, int (*compar)(const void *, const void 
       }
       else
       {
-        printf("SOMEWHERE IN THE MIDDLE\n");
         prev->next = cur_node->next;
         free(cur_node->data);
         cur_node->next = NULL;
