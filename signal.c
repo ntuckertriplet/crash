@@ -8,7 +8,7 @@
  * to kill the shell via user input signals
  * 
  * @param signal the int signal
- */ 
+ */
 void signal_handler(int signal)
 {
   fprintf(stderr, "\n");

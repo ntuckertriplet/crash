@@ -1,4 +1,5 @@
 #include "comparator.h"
+#include "process.h"
 
 /**
  * A comparator that casts void* to int* and returns the difference.
@@ -32,4 +33,12 @@ int float_comp(const void *p1, const void *p2)
   float x = *(float *)p1;
   float y = *(float *)p2;
   return x - y;
+}
+
+int proc_comp(const void *p1, const void *p2)
+{
+  process proc_1 = *(process *)p1;
+  process proc_2 = *(process *)p2;
+
+  return proc_1.pid - proc_2.pid;
 }

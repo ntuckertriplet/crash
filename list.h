@@ -17,5 +17,6 @@ void list_add(linked_list *list, void *data, size_t size);
 void *get(linked_list *list, int index);
 int contains(linked_list *list, void *data, int (*compar)(const void *, const void *));
 int index_of(linked_list *list, void *data, int (*compar)(const void *, const void *));
+int list_delete(linked_list *list, void *data, int (*compar)(const void *, const void *));
 
 #endif

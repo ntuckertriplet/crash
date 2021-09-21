@@ -12,7 +12,7 @@
  * a little more legwork in.
  * 
  * See {@link https://github.com/ntuckertriplet/libdatastructures/blob/master/linkedlist.c}
- */ 
+ */
 
 /**
  * Helper method to add item to the list
@@ -186,7 +186,7 @@ int _index_of(node *head, void *data, int (*compar)(const void *, const void *))
 /**
  * Get the index of particular data
  * 
- * @param head the head of the linked list
+ * @param list a pointer to the linked list
  * @param data the void* data to check the index of
  * @param compar* a custom comparator to be passed in
  * 
@@ -194,5 +194,75 @@ int _index_of(node *head, void *data, int (*compar)(const void *, const void *))
  */
 int index_of(linked_list *list, void *data, int (*compar)(const void *, const void *))
 {
-    return _index_of(list->head, data, (*compar));
+  return _index_of(list->head, data, (*compar));
+}
+
+/**
+ * Helper method to delete items from the list
+ * 
+ * @param head the head of the list
+ * @param data the void* data to remove
+ * @param compar* a custom comparator
+ */
+int _list_delete(node *head, void *data, int (*compar)(const void *, const void *))
+{
+  printf("WE ARE HERE\n");
+  if (head == NULL || data == NULL)
+  {
+    return -1;
+  }
+
+  node *cur_node = head;
+  node *prev = head;
+  while (cur_node != NULL)
+  {
+    printf("WALKING THE LIST\n");
+    if ((*compar)(cur_node->data, data) == 0)
+    {
+      printf("FOUND AN ITEM\n");
+      if ((*compar)(cur_node->data, head->data) == 0) // head of list
+      {
+        printf("WE ARE AT THE HEAD\n");
+        head = cur_node->next;
+        free(cur_node->data);
+        cur_node->next = NULL;
+        return 0;
+      }
+      else if (cur_node->next == NULL) // back of list
+      {
+        printf("WE ARE AT THE END\n");
+        prev->next = NULL;
+        cur_node->next = NULL;
+        free(cur_node->data);
+        return 0;
+      }
+      else
+      {
+        printf("SOMEWHERE IN THE MIDDLE\n");
+        prev->next = cur_node->next;
+        free(cur_node->data);
+        cur_node->next = NULL;
+        return 0;
+      }
+    }
+
+    prev = cur_node;
+    cur_node = cur_node->next;
+  }
+
+  return -1;
+}
+
+/**
+ * Delete an item from the list
+ * 
+ * @param head the head of the linked list
+ * @param data the void* data to remove from the list
+ * @param compar* a custom comparator to be passed in
+ * 
+ * @returns 0 if removed, -1 if not found in the list
+ */
+int list_delete(linked_list *list, void *data, int (*compar)(const void *, const void *))
+{
+  return _list_delete(list->head, data, (*compar));
 }
