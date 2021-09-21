@@ -12,8 +12,8 @@
 - [x] print error if flag is used, but with no prompt
 - [x] accept user input
 - [x] parse commands and flags
-- [ ] program commands (using `execvp()`)
-- [ ] notify user if command is not found
+- [x] program commands (using `execvp()`)
+- [x] notify user if command is not found
 - [x] print pid of command when spawned, including name of command
 - [x] wait for child to exit by default
 - [x] when a child process exits, print out the pid and exit status
