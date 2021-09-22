@@ -65,8 +65,6 @@ int main(int argc, char **argv)
     int malloc_size = 2;
     char **commands = malloc(sizeof(char *) * malloc_size);
 
-    // don't interrupt the output if there was an ended task being printed
-    usleep(250);
     fprintf(stdout, "%s", prompt);
 
     char *input = NULL;
@@ -185,8 +183,21 @@ int main(int argc, char **argv)
           to_add->pid = pid;
           to_add->name = strdup(commands[0]);
           list_add(jobs, to_add);
+
+          // created process is no longer needed
+          free(to_add->name);
+          free(to_add);
         }
       }
+
+      // some seriously needed memory cleanup
+      for (i = 0; i < num_inputs; i++)
+      {
+        free(args[i]);
+        free(commands[i]);
+      }
+
+      free(args[num_inputs]);
     }
   }
 
