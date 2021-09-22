@@ -3,8 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "comparator.h"
-#include "debug.h"
 #include "list.h"
 #include "process.h"
 #include "signal.h"
@@ -34,10 +32,7 @@ int main(int argc, char **argv)
 
   while (1)
   {
-    // signal(SIGINT, signal_handler); // we want to catch ^C
-#ifdef DEBUG
-    fprintf(stdout, "BACK TO THE TOP\n");
-#endif
+    signal(SIGINT, signal_handler); // we want to catch ^C
 
     int bg_status = -1;
     int bg_pid = -1;
@@ -50,14 +45,8 @@ int main(int argc, char **argv)
       node *cur_node = jobs->head;
       while (cur_node != NULL)
       {
-#ifdef DEBUG
-        fprintf(stdout, "WE FOUND PROCESSES\n");
-#endif
         if (cur_node->p->pid == bg_pid)
         {
-#ifdef DEBUG
-          fprintf(stdout, "WE FOUND A MATCHING PROCESSES %d\n", cur_node->p->pid);
-#endif
           bg_name = strdup(cur_node->p->name);
           break;
         }
@@ -65,15 +54,8 @@ int main(int argc, char **argv)
         cur_node = cur_node->next;
       }
 
-#ifdef DEBUG
-      fprintf(stdout, "FINISHED LOOKING THROUGH PROCESSES\n");
-#endif
-
       fprintf(stderr, "background child ended: ");
       get_status(bg_pid, bg_status, bg_name);
-#ifdef DEBUG
-      fprintf(stdout, "CALLING LIST DELETE\n");
-#endif
       list_delete(jobs, cur_node->p);
     }
     /* End background checking */
@@ -113,22 +95,10 @@ int main(int argc, char **argv)
       input_token = strtok(NULL, " ");
     }
 
-#ifdef DEBUG
-    fprintf(stdout, "WE GOT %d INPUTS\n", num_inputs);
-    for (int j = 0; j < num_inputs; j++)
-      fprintf(stdout, "COMMAND AT INDEX %d IS %s\n", j, commands[j]);
-#endif
-
     // check if we need to background it
     int background_command = (strcmp(commands[num_inputs - 1], "&") == 0);
-#ifdef DEBUG
-    fprintf(stdout, "DO_BACKGROUND STATUS: %d\n", do_background);
-#endif
     if (background_command)
       num_inputs -= 1; // this will be important when we go to fork
-#ifdef DEBUG
-    fprintf(stdout, "NEW NUM INPUTS IS %d\n", num_inputs);
-#endif
 
     /* Builtin commands to support */
     if (strncmp(commands[0], "exit", 4) == 0)
@@ -189,11 +159,6 @@ int main(int argc, char **argv)
         args[i] = strdup(commands[i]);
       args[num_inputs] = NULL;
 
-#ifdef DEBUG
-      for (i = 0; i < num_inputs + 1; i++)
-        fprintf(stdout, "ARG AT %d IS %s\n", i, args[i]);
-#endif
-
       int pid, status;
       pid = fork();
       if (pid < 0)
@@ -201,9 +166,6 @@ int main(int argc, char **argv)
       else if (pid == 0) // child process
       {
         int error = execvp(commands[0], args);
-#ifdef DEBUG
-        fprintf(stdout, "EXECVP OUTPUT: %d WITH COMMAND %s\n", error, commands[0]);
-#endif
         if (error < 0)
           fprintf(stderr, "command not found: \"%s\"\n", commands[0]);
         exit(-1);

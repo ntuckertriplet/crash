@@ -3,10 +3,9 @@
 #include <string.h>
 
 #include "list.h"
-#include "debug.h"
 
 /**
- * This is a helper Linked List class that I made as part
+ * This is a modified Linked List class that I made as part
  * of a data structures library that was meant to be portable,
  * generic, and easy to use. I know, generics in C sounds spooky,
  * and at times, it is, but it works as long as you put
@@ -53,22 +52,12 @@ void _list_add(node *head, process *p)
  */
 void list_add(linked_list *list, process *p)
 {
-#ifdef DEBUG
-  fprintf(stdout, "ADDING TO THE LIST\n");
-#endif
   if (list->head == NULL)
   {
-#ifdef DEBUG
-    fprintf(stdout, "NULL HEAD\n");
-    fprintf(stdout, "ADDING PID %d AND NAME %s\n", p->pid, p->name);
-#endif
     list->head = malloc(sizeof(node));
     list->head->p = malloc(sizeof(process));
     memcpy(list->head->p, p, sizeof(process));
     list->size++;
-#ifdef DEBUG
-    fprintf(stdout, "ADDED PID %d AND NAME %s\n", list->head->p->pid, list->head->p->name);
-#endif
     return;
   }
 
@@ -85,9 +74,6 @@ void list_add(linked_list *list, process *p)
  */
 int _list_delete(node *head, process *p)
 {
-#ifdef DEBUG
-  fprintf(stdout, "WE ARE HERE\n");
-#endif
   if (head == NULL || p == NULL)
   {
     return -1;
