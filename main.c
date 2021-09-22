@@ -35,6 +35,9 @@ int main(int argc, char **argv)
   while (1)
   {
     // signal(SIGINT, signal_handler); // we want to catch ^C
+#ifdef DEBUG
+    fprintf(stdout, "BACK TO THE TOP\n");
+#endif
 
     int bg_status = -1;
     int bg_pid = -1;
@@ -47,19 +50,31 @@ int main(int argc, char **argv)
       node *cur_node = jobs->head;
       while (cur_node != NULL)
       {
-        process *p = (process *)cur_node->data;
-        if (p->pid == bg_pid)
+#ifdef DEBUG
+        fprintf(stdout, "WE FOUND PROCESSES\n");
+#endif
+        if (cur_node->p->pid == bg_pid)
         {
-          bg_name = strdup(p->name);
+#ifdef DEBUG
+          fprintf(stdout, "WE FOUND A MATCHING PROCESSES %d\n", cur_node->p->pid);
+#endif
+          bg_name = strdup(cur_node->p->name);
           break;
         }
 
         cur_node = cur_node->next;
       }
 
+#ifdef DEBUG
+      fprintf(stdout, "FINISHED LOOKING THROUGH PROCESSES\n");
+#endif
+
       fprintf(stderr, "background child ended: ");
       get_status(bg_pid, bg_status, bg_name);
-      list_delete(jobs, cur_node->data, proc_comp);
+#ifdef DEBUG
+      fprintf(stdout, "CALLING LIST DELETE\n");
+#endif
+      list_delete(jobs, cur_node->p);
     }
     /* End background checking */
     /* Start taking user input */
@@ -69,7 +84,7 @@ int main(int argc, char **argv)
     char **commands = malloc(sizeof(char *) * malloc_size);
 
     // don't interrupt the input/output buffer
-    usleep(50);
+    usleep(100);
     fprintf(stdout, "%s", prompt);
 
     char *input = NULL;
@@ -105,11 +120,11 @@ int main(int argc, char **argv)
 #endif
 
     // check if we need to background it
-    int do_background = (strcmp(commands[num_inputs - 1], "&") == 0);
+    int background_command = (strcmp(commands[num_inputs - 1], "&") == 0);
 #ifdef DEBUG
     fprintf(stdout, "DO_BACKGROUND STATUS: %d\n", do_background);
 #endif
-    if (do_background)
+    if (background_command)
       num_inputs -= 1; // this will be important when we go to fork
 #ifdef DEBUG
     fprintf(stdout, "NEW NUM INPUTS IS %d\n", num_inputs);
@@ -157,8 +172,7 @@ int main(int argc, char **argv)
         node *cur_node = jobs->head;
         while (cur_node != NULL)
         {
-          process *p = (process *)cur_node->data;
-          fprintf(stdout, "pid: %d, name: %s\n", p->pid, p->name);
+          fprintf(stdout, "pid: %d, name: %s\n", cur_node->p->pid, cur_node->p->name);
           cur_node = cur_node->next;
         }
       }
@@ -186,18 +200,18 @@ int main(int argc, char **argv)
         fprintf(stderr, "whoa there, something went awry with that fork\n");
       else if (pid == 0) // child process
       {
-        fprintf(stdout, "[%d] %s\n", getpid(), commands[0]);
-        int error = execvp(commands[0], commands);
+        fprintf(stderr, "[%d] %s\n", getpid(), commands[0]);
+        int error = execvp(commands[0], args);
 #ifdef DEBUG
-        fprintf(stdout, "EXECVP OUTPUT: %d\n", error);
+        fprintf(stdout, "EXECVP OUTPUT: %d WITH COMMAND %s\n", error, commands[0]);
 #endif
         if (error < 0)
-          fprintf(stderr, "command not found: %s\n", commands[0]);
+          fprintf(stderr, "command not found: \"%s\"\n", commands[0]);
         exit(-1);
       }
       else // parent now
       {
-        if (!do_background)
+        if (!background_command)
         {
           waitpid(pid, &status, 0);
           get_status(pid, status, commands[0]);
@@ -207,15 +221,10 @@ int main(int argc, char **argv)
           process *to_add = malloc(sizeof(process));
           to_add->pid = pid;
           to_add->name = strdup(commands[0]);
-          list_add(jobs, (void *)to_add, sizeof(process));
+          list_add(jobs, to_add);
         }
       }
     }
-
-    /* cleanup */
-    int i;
-    for (i = 0; i < num_inputs; i++)
-      free(commands[i]);
   }
 
   return 0;

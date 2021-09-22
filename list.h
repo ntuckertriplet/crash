@@ -1,6 +1,8 @@
 #ifndef LIST_H_
 #define LIST_H_
 
+#include "process.h"
+
 typedef struct linked_list
 {
   struct node *head;
@@ -9,14 +11,11 @@ typedef struct linked_list
 
 typedef struct node
 {
-  void *data;
+  process *p;
   struct node *next;
 } node;
 
-void list_add(linked_list *list, void *data, size_t size);
-void *get(linked_list *list, int index);
-int contains(linked_list *list, void *data, int (*compar)(const void *, const void *));
-int index_of(linked_list *list, void *data, int (*compar)(const void *, const void *));
-int list_delete(linked_list *list, void *data, int (*compar)(const void *, const void *));
+void list_add(linked_list *list, process *p);
+int list_delete(linked_list *list, process *p);
 
 #endif

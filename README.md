@@ -17,7 +17,7 @@
 - [x] print pid of command when spawned, including name of command
 - [x] wait for child to exit by default
 - [x] when a child process exits, print out the pid and exit status
-- [ ] backgrounding tasks
+- [x] backgrounding tasks (TODO fix weird print error)
 - [x] `exit`
 - [x] `pid`
 - [x] `ppid`
@@ -27,7 +27,7 @@
 
 ## extra credit
 
-- [ ] jobs command
+- [x] jobs command
 
 ## things i added (or want to add) not in the spec
 
