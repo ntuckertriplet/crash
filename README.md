@@ -31,7 +31,7 @@
 
 ## things i added (or want to add) not in the spec
 
-- [ ] get env vars
+- [x] get env vars
 - [ ] set env vars
 - [ ] file redirects
 - [ ] pipes

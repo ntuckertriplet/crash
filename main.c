@@ -146,7 +146,20 @@ int main(int argc, char **argv)
       }
     }
     else if (strcmp(commands[0], "") == 0) // ignore empty input
+    {
       continue;
+    }
+    else if (strncmp(commands[0], "get", 3) == 0)
+    {
+      if (num_inputs < 2)
+        fprintf(stderr, "you need to pass the name of the var you want to get");
+
+      char *var = getenv(commands[1]);
+      if (var == NULL)
+        fprintf(stderr, "that variable does not exist, set it first!");
+
+      fprintf(stdout, "%s\n", var);
+    }
     /* End builtins */
     else
     { /* start sending things to the shell */
