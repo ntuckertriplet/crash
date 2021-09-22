@@ -83,8 +83,8 @@ int main(int argc, char **argv)
     int malloc_size = 2;
     char **commands = malloc(sizeof(char *) * malloc_size);
 
-    // don't interrupt the input/output buffer
-    usleep(100);
+    // don't interrupt the output if there was an ended task being printed
+    usleep(250);
     fprintf(stdout, "%s", prompt);
 
     char *input = NULL;
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "whoa there, something went awry with that fork\n");
       else if (pid == 0) // child process
       {
-        fprintf(stderr, "[%d] %s\n", getpid(), commands[0]);
+        fprintf(stdout, "[%d] %s\n", getpid(), commands[0]);
         int error = execvp(commands[0], args);
 #ifdef DEBUG
         fprintf(stdout, "EXECVP OUTPUT: %d WITH COMMAND %s\n", error, commands[0]);

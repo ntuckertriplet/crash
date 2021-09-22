@@ -16,8 +16,8 @@
 - [x] notify user if command is not found
 - [x] print pid of command when spawned, including name of command
 - [x] wait for child to exit by default
-- [x] when a child process exits, print out the pid and exit status
-- [x] backgrounding tasks (TODO fix weird print error)
+- [ ] when a child process exits, print out the pid and exit status // possible segfault
+- [ ] backgrounding tasks
 - [x] `exit`
 - [x] `pid`
 - [x] `ppid`
@@ -27,7 +27,7 @@
 
 ## extra credit
 
-- [x] jobs command
+- [ ] jobs command // segfault
 
 ## things i added (or want to add) not in the spec
 
