@@ -16,6 +16,6 @@ typedef struct node
 } node;
 
 void list_add(linked_list *list, process *p);
-int list_delete(linked_list *list, process *p);
+void list_delete(linked_list *list, process *p);
 
 #endif

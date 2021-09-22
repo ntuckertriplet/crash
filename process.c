@@ -10,7 +10,7 @@
  * @param status the exit status that will give the final status
  * @param name the name of the process, mostly for formatting purposes
  */
-void get_status(int pid, int status, char *name)
+void get_status(pid_t pid, int status, char *name)
 {
   if (WIFEXITED(status))
     fprintf(stderr, "[%d] %s exited %d\n", pid, name, status);

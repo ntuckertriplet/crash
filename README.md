@@ -27,7 +27,7 @@
 
 ## extra credit
 
-- [ ] jobs command // segfault
+- [x] jobs command // segfault
 
 ## things i added (or want to add) not in the spec
 

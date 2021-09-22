@@ -3,10 +3,10 @@
 
 typedef struct process
 {
-  int pid;
+  pid_t pid;
   char *name;
 } process;
 
-void get_status(int pid, int status, char *name);
+void get_status(pid_t pid, int status, char *name);
 
 #endif

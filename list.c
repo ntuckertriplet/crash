@@ -5,50 +5,10 @@
 #include "list.h"
 
 /**
- * This is a modified Linked List class that I made as part
- * of a data structures library that was meant to be portable,
- * generic, and easy to use. I know, generics in C sounds spooky,
- * and at times, it is, but it works as long as you put
- * a little more legwork in.
- * 
- * See {@link https://github.com/ntuckertriplet/libdatastructures/blob/master/linkedlist.c}
- */
-
-/**
  * Helper method to add item to the list
  * 
- * @param head the head node of the linked list
- * @param p the process to add to the list
- */
-void _list_add(node *head, process *p)
-{
-  if (head->p == NULL)
-  {
-    head->p = malloc(sizeof(process));
-    memcpy(head->p, p, sizeof(process));
-    return;
-  }
-
-  node *to_add = malloc(sizeof(node));
-  to_add->p = malloc(sizeof(process));
-  memcpy(to_add->p, p, sizeof(process));
-  to_add->next = NULL;
-
-  node *cur_node = head;
-  while (cur_node->next != NULL)
-  {
-    cur_node = cur_node->next;
-  }
-
-  cur_node->next = to_add;
-}
-
-/**
- * Add item to the list
- * 
  * @param list the list to add to
- * @param data the data in a void * to add
- * @param size the size_t of the data to add
+ * @param p the process to add to the list
  */
 void list_add(linked_list *list, process *p)
 {
@@ -56,87 +16,86 @@ void list_add(linked_list *list, process *p)
   {
     list->head = malloc(sizeof(node));
     list->head->p = malloc(sizeof(process));
-    memcpy(list->head->p, p, sizeof(process));
+    list->head->p->name = strdup(p->name);
+    list->head->p->pid = p->pid;
     list->size++;
     return;
   }
 
-  _list_add(list->head, p);
+  node *to_add = malloc(sizeof(node));
+  to_add->p = malloc(sizeof(process));
+  to_add->p->name = strdup(p->name);
+  to_add->p->pid = p->pid;
+  to_add->next = NULL;
+
+  node *cur_node = list->head;
+  while (cur_node->next != NULL)
+  {
+    cur_node = cur_node->next;
+  }
+
+  cur_node->next = to_add;
   list->size++;
 }
 
 /**
- * Helper method to delete items from the list
+ * Delete an item from the list
  * 
- * @param head the head of the list
- * @param data the void* data to remove
- * @param compar* a custom comparator
+ * @param list the linked list to delete from
+ * @param p the process to delete
+ * 
+ * @returns 0 if removed, -1 if not found in the list
  */
-int _list_delete(node *head, process *p)
+void list_delete(linked_list *list, process *p)
 {
-  if (head == NULL || p == NULL)
+  if (list == NULL || p == NULL)
+    return;
+
+  if (list->head == NULL || list->head->p == NULL)
+    return;
+
+  node *cur_node = list->head;
+  if (list->head->p->pid == p->pid) // if the head matches
   {
-    return -1;
+    if (list->size == 1)
+    {
+      free(cur_node->p->name);
+      free(cur_node->p);
+      free(list->head);
+      list->head = NULL;
+      list->size--;
+      return;
+    }
+    else
+    {
+      free(cur_node->p->name);
+      free(cur_node->p);
+      list->head = list->head->next;
+      cur_node->next = NULL;
+      free(cur_node);
+      list->size--;
+      return;
+    }
   }
 
-  node *cur_node = head;
-  node *prev = head;
+  node *prev = cur_node;
+  cur_node = cur_node->next;
   while (cur_node != NULL)
   {
     if (cur_node->p->pid == p->pid)
     {
-      if (head->p->pid == cur_node->p->pid) // head of list
-      {
-        if (head->next == NULL) // if the head is the only member of the list
-        {
-          free(head->p);
-          return 0;
-        }
-        else
-        {
-          head = cur_node->next;
-          free(cur_node->p);
-          cur_node->next = NULL;
-          return 0;
-        }
-      }
-      else if (cur_node->next == NULL) // back of list
-      {
-        prev->next = NULL;
-        cur_node->next = NULL;
-        free(cur_node->p);
-        return 0;
-      }
-      else
-      {
-        prev->next = cur_node->next;
-        free(cur_node->p);
-        cur_node->next = NULL;
-        return 0;
-      }
+      free(cur_node->p->name);
+      free(cur_node->p);
+      prev->next = cur_node->next;
+      cur_node->next = NULL;
+      free(cur_node);
+      list->size--;
+      return;
     }
 
     prev = cur_node;
     cur_node = cur_node->next;
   }
 
-  return -1;
-}
-
-/**
- * Delete an item from the list
- * 
- * @param head the head of the linked list
- * @param p the process to delete
- * 
- * @returns 0 if removed, -1 if not found in the list
- */
-int list_delete(linked_list *list, process *p)
-{
-  int del = _list_delete(list->head, p);
-  if (del < 0)
-    return -1;
-
-  list->size--;
-  return 0;
+  return;
 }

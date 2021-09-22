@@ -159,7 +159,8 @@ int main(int argc, char **argv)
         args[i] = strdup(commands[i]);
       args[num_inputs] = NULL;
 
-      int pid, status;
+      pid_t pid;
+      int status;
       pid = fork();
       if (pid < 0)
         fprintf(stderr, "whoa there, something went awry with that fork\n");
