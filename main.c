@@ -200,7 +200,6 @@ int main(int argc, char **argv)
         fprintf(stderr, "whoa there, something went awry with that fork\n");
       else if (pid == 0) // child process
       {
-        fprintf(stdout, "[%d] %s\n", getpid(), commands[0]);
         int error = execvp(commands[0], args);
 #ifdef DEBUG
         fprintf(stdout, "EXECVP OUTPUT: %d WITH COMMAND %s\n", error, commands[0]);
@@ -211,6 +210,7 @@ int main(int argc, char **argv)
       }
       else // parent now
       {
+        fprintf(stdout, "[%d] %s\n", pid, commands[0]);
         if (!background_command)
         {
           waitpid(pid, &status, 0);

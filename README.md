@@ -16,8 +16,8 @@
 - [x] notify user if command is not found
 - [x] print pid of command when spawned, including name of command
 - [x] wait for child to exit by default
-- [ ] when a child process exits, print out the pid and exit status // possible segfault
-- [ ] backgrounding tasks
+- [x] when a child process exits, print out the pid and exit status // possible segfault
+- [x] backgrounding tasks
 - [x] `exit`
 - [x] `pid`
 - [x] `ppid`
