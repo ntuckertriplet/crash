@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     size_t len = 0;
     getline(&input, &len, stdin);
 
-    // snag the first item in the line (possible it's the first)
+    // snag the first item in the line
     char *input_token = strtok(input, " ");
     int num_inputs = 0; // num inputs will always be +1 because 0 index
     while (input_token != NULL)

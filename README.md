@@ -23,11 +23,11 @@
 - [x] `ppid`
 - [x] `cd`
 - [x] `cd <dir>`
-- [x] `pwd
+- [x] `pwd`
 
 ## extra credit
 
-- [x] jobs command // segfault
+- [x] jobs command
 
 ## things i added (or want to add) not in the spec
 
