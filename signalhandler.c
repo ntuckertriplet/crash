@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "signal.h"
+#include "signalhandler.h"
 
 /**
  * This is a function meant to catch SIGKILL, SIGINT, and others.
