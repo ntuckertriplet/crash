@@ -41,10 +41,12 @@ void list_add(linked_list *list, process *p)
 /**
  * Delete an item from the list
  * 
+ * This method could admiteddly be smaller, but it
+ * does have a good runtime, as a few cases are checked for immediately
+ * rather than trying to walk the list first.
+ * 
  * @param list the linked list to delete from
  * @param p the process to delete
- * 
- * @returns 0 if removed, -1 if not found in the list
  */
 void list_delete(linked_list *list, process *p)
 {
@@ -57,7 +59,7 @@ void list_delete(linked_list *list, process *p)
   node *cur_node = list->head;
   if (list->head->p->pid == p->pid) // if the head matches
   {
-    if (list->size == 1)
+    if (list->size == 1) // if the only item in the list is the head
     {
       free(cur_node->p->name);
       free(cur_node->p);
@@ -66,7 +68,7 @@ void list_delete(linked_list *list, process *p)
       list->size--;
       return;
     }
-    else
+    else // if there are more items than just the head
     {
       free(cur_node->p->name);
       free(cur_node->p);
@@ -78,6 +80,7 @@ void list_delete(linked_list *list, process *p)
     }
   }
 
+  // start to walk the list
   node *prev = cur_node;
   cur_node = cur_node->next;
   while (cur_node != NULL)
@@ -86,8 +89,11 @@ void list_delete(linked_list *list, process *p)
     {
       free(cur_node->p->name);
       free(cur_node->p);
+
+      // do some pointer redirect so that prev points now to cur_node -> next
       prev->next = cur_node->next;
       cur_node->next = NULL;
+
       free(cur_node);
       list->size--;
       return;

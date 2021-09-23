@@ -1,0 +1,5 @@
+# Programming Project 1 - Nathan Tucker (njtucker@iastate.edu)
+
+This programming project was one that I had heard about from older peers and was looking forward to immensely. It is a cool idea and taught me more than I could have thought. The parts I struggled on the most were the parts that taught me the most as well. I particularly got to learn about all of the C builtins that I had no idea existed. Changing directory , getting pid and ppid, etc are all just C builtins which seems incredibly helpful for programming threaded programs and was particularly helpful when backgrounding tasks.
+
+Beyond that it was just applying the conceptual knowledge of user input and exec'ing commands either in the shell or as a child process that I found fascinating. **I did elect to do the extra credit assignment of `jobs`.** It was a pretty simple thing to do as well, if a process is backgrounded, just add that process' info (name and pid) to a data structure. I chose a linked list. Then, once I detect that the program has finished execution, remove that item from the list (based on pid). The list code can be found in `list.c` and is a fairly straightforward list.
