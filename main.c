@@ -35,7 +35,9 @@ int main(int argc, char **argv)
 
   while (1)
   {
-    signal(SIGINT, signal_handler); // we want to catch ^C
+    signal(SIGINT, signal_handler);  // we want to catch ^C
+    signal(SIGTSTP, signal_handler); // we want to catch ^Z
+    signal(SIGQUIT, signal_handler); // we want to catch SIGQUIT (i cant type backslash)
 
     int bg_status = -1;
     int bg_pid = -1;
