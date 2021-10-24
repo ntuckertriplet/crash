@@ -1,5 +1,5 @@
 CFLAGS= -g -I. -Og -Wall
-DEPS = list.h signalhandler.h process.h
+DEPS = list.h signalhandler.h process.h printlogo.h
 LIBS = -lpthread
 EXEC_FILE = 308sh
 

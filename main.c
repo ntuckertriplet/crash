@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "list.h"
+#include "printlogo.h"
 #include "process.h"
 #include "signalhandler.h"
 
@@ -32,6 +33,8 @@ int main(int argc, char **argv)
   }
 
   linked_list *jobs = malloc(sizeof(linked_list));
+
+  print_logo();
 
   while (1)
   {
