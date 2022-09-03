@@ -3,7 +3,7 @@
 ## compilation instructions
 
 1. simply type `make`
-2. run with `./308sh`
+2. run with `./crash`
 
 ## todo
 

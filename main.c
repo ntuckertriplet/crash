@@ -14,7 +14,7 @@
 int main(int argc, char **argv)
 {
   int opt = -1;
-  char *prompt = "308sh> ";
+  char *prompt = "crash> ";
 
   while ((opt = getopt(argc, argv, "hp:")) != -1)
   {

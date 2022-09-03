@@ -1,7 +1,7 @@
 CFLAGS= -g -I. -Og -Wall
 DEPS = list.h signalhandler.h process.h printlogo.h
 LIBS = -lpthread
-EXEC_FILE = 308sh
+EXEC_FILE = crash
 
 all: $(EXEC_FILE)
 
